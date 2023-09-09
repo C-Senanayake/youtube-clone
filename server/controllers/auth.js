@@ -26,6 +26,7 @@ export const signup = async (req, res,next) => {
 };
 
 export const signin = async (req,res,next)=>{
+    console.log("HIII::",req.body);
     const {email,pass} = req.body;
     const user = await User.findOne({email:email});
     if(user){
@@ -42,5 +43,32 @@ export const signin = async (req,res,next)=>{
         }
     }else{
         next(createError(400,"User not found"));
+    }
+}
+
+export const googleAuth = async (req,res,next)=>{
+    try {
+        const user = await User.findOne({email:req.body.email});
+        if(user){
+            const {password, ...others} = user._doc;
+            const token = jwt.sign({id:user._id,name:user.name,email:user.email},process.env.JWT_SECRET_KEY,{expiresIn:"1h"});
+            res.cookie("access_token",token,{
+                httpOnly:true
+            }).status(200).json({message:"User signed in", others});
+            // res.status(200).json({message:"User signed in", user});
+        }else{
+            const newUser = new User({
+                ...req.body,
+                fromGoogle:true
+            })
+            const savedUser = await newUser.save();
+            const {password, ...others} = savedUser._doc;
+            const token = jwt.sign({id:savedUser._id,name:savedUser.name,email:savedUser.email},process.env.JWT_SECRET_KEY,{expiresIn:"1h"});
+            res.cookie("access_token",token,{
+                httpOnly:true
+            }).status(200).json({message:"User signed in", others});
+        }
+    } catch (error) {
+        next(error);
     }
 }

@@ -1,5 +1,6 @@
 import { createError } from "../error.js"
 import User from "../models/user.js";
+import Video from "../models/video.js";
 
 export const update = async (req,res,next)=>{
     if(req.params.id === req.user.id){
@@ -73,9 +74,29 @@ export const unSubscribe = async (req,res,next)=>{
 }
 
 export const like = async (req,res,next)=>{
-    
+    const id = req.user.id;
+    const videoId = req.params.videoId;
+    try {
+        await Video.findByIdAndUpdate(videoId,{
+            $addToSet:{likes:id}, //addToSet is used to add only unique values. If there's duplicate value, it won't be added
+            $pull:{dislikes:id} //pull is used to remove the value from the array
+        });
+        res.status(200).json("Video liked");
+    } catch (error) {
+        next(error);
+    }
 }
 
 export const dislike = async (req,res,next)=>{
-    
+    const id = req.user.id;
+    const videoId = req.params.videoId;
+    try {
+        await Video.findByIdAndUpdate(videoId,{
+            $addToSet:{dislikes:id}, //addToSet is used to add only unique values. If there's duplicate value, it won't be added
+            $pull:{likes:id} //pull is used to remove the value from the array
+        });
+        res.status(200).json("Video disliked");
+    } catch (error) {
+        next(error);
+    }
 }
