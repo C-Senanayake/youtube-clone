@@ -9,17 +9,18 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-const Home = ({trend}) => {
+const Home = ({type}) => {
   const [videos,setVIdeos] = useState([]);
   useEffect(()=>{
-    axios.get(`/videos/${trend}`)
+    axios.get(`/videos/${type}`)
     .then((res)=>{
+      console.log(res.data)
       setVIdeos(res.data);
     })
     .catch((err)=>{
       console.log(err);
     })
-  },[trend])
+  },[type])
   return (
     <Container>
       {videos.map(video=>(

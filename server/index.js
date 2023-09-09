@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import videoRoutes from "./routes/videos.js";
 import commentRoutes from "./routes/comments.js";
+import cors from "cors";
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -14,7 +15,14 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json({linit:'30mb',extended:true}));
 app.use(bodyParser.urlencoded({limit:'30mb',extended:true}));
-
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  };
+  
+  app.use(cors(corsOptions));
 //Error handler call by=>next(err)
 app.use((err,req,res,next)=>{
     const status = err.status || 500;

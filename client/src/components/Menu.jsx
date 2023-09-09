@@ -94,10 +94,12 @@ const Menu = ({ darkMode, setDarkMode }) => {
             ChamaTube
           </Logo>
         </Link>
-        <Item>
+        <Link to="/" style={{textDecoration:"none",color:"inherit"}}>
+          <Item>
           <HomeIcon />
           Home
-        </Item>
+          </Item>
+        </Link>
         <Link to="trend" style={{textDecoration:"none",color:"inherit"}}>
           <Item>
             <ExploreOutlinedIcon />

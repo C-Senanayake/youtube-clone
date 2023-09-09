@@ -72,3 +72,8 @@ export const googleAuth = async (req,res,next)=>{
         next(error);
     }
 }
+
+export const logout = (req,res,next)=>{
+    console.log("LOGOUT::");
+    res.cookie('access_token','').json(true);
+}

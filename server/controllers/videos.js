@@ -3,6 +3,7 @@ import User from "../models/user.js"
 import Video from "../models/video.js"
 
 export const addVideo = async (req,res,next)=>{
+    console.log("BODY::",req.body);
     const newVideo = new Video({userId: req.user.id,...req.body});
     try {
         const savedVideo = await newVideo.save();
@@ -59,6 +60,7 @@ export const getVideo = async (req,res,next)=>{
 }
 
 export const addView = async (req,res,next)=>{
+    console.log("req.params.id::",req.params.id);
     try {
         await Video.findByIdAndUpdate(
             req.params.id,

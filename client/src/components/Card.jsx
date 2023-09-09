@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { format } from "timeago";
+import { format } from "timeago.js";
 import axios from "axios";
 
 const Container = styled.div`
@@ -69,7 +69,7 @@ const Card = ({ type , video }) => {
       <Container type={type}>
         <Image
           type={type}
-          src={video.imageUrl}
+          src={video.imgUrl}
         />
         <Details type={type}>
           <ChannelImage

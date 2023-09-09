@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
 import { auth , provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -73,7 +74,7 @@ const SignIn = () => {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleLogin = async (e) =>{
     e.preventDefault();
     dispatch(loginStart());
@@ -85,6 +86,7 @@ const SignIn = () => {
       // res.data && window.location.replace('/');
       console.log(res.data);
       dispatch(loginSuccess(res.data.others));
+      navigate('/');
     }
     catch(err){
       console.log(err);
@@ -103,6 +105,7 @@ const signInWithGoogle = async ()=>{
     })
     .then((res)=>{
       dispatch(loginSuccess(res.data.others))
+      navigate('/');
     })
     .catch((error)=>{
       dispatch(loginFailure());

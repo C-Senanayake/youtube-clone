@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { fetchSuccess,like , dislike } from "../redux/videoSlice";
-import { format } from "timeago";
+import { format } from "timeago.js";
 import { subscription } from "../redux/userSlice";
 
 const Container = styled.div`
@@ -123,21 +123,25 @@ const Video = () => {
   const {currentVideo} = useSelector((state)=>state.video);
   const dispatch = useDispatch();
   const path = useLocation().pathname.split("/")[2];
+  console.log("path::::",path);
   const [channel,setChannel] = useState({});
   
 
   useEffect(()=>{
     const fetchData = async () =>{
+      console.log("path::",path);
       try {
         const videoRes = await axios.get(`/videos/find/${path}`);
+        console.log("videoRes::",videoRes);
         const channelRes = await axios.get(`/users/find/${videoRes.data.userId}`);
+        console.log("channelRes::",channelRes);
         setChannel(channelRes.data);
-        dispatch(fetchSuccess(videoRes.data))
-
+        dispatch(fetchSuccess(videoRes.data));
+        await axios.put(`http://localhost:5000/api/videos/view/${path}`);
       } catch (error) {
         
       }
-    }
+    };
     fetchData();
   },[path,dispatch])
 
@@ -152,7 +156,7 @@ const Video = () => {
   }
 
   const handleSub = async ()=>{
-    currentUser.subscribedUsers.include(channel._id) ?
+    currentUser.subscribedUsers.includes(channel._id) ?
     await axios.put(`/users/unsub/${channel._id}`)
     : await axios.put(`/users/sub/${channel._id}`)
     dispatch(subscription(channel._id));
@@ -162,19 +166,19 @@ const Video = () => {
     <Container>
       <Content>
         <VideoWrapper>
-          <VideoFrame src={currentVideo.videoUrl}/>
+          <VideoFrame src={currentVideo?.videoUrl} controls/>
         </VideoWrapper>
-        <Title>{currentVideo.title}</Title>
+        <Title>{currentVideo?.title}</Title>
         <Details>
-          <Info>{currentVideo.views} • {format(currentVideo.createdAt)}</Info>
+          <Info>{currentVideo?.views} • {format(currentVideo?.createdAt)}</Info>
           <Buttons>
             <Button onClick={handleLike}>
-              {currentVideo.likes?.includes(currentUser._id) ? 
+              {currentVideo?.likes?.includes(currentUser?._id) ? 
               <ThumbUpIcon /> : 
-              <ThumbUpOutlinedIcon /> }{currentVideo.likes?.length}
+              <ThumbUpOutlinedIcon /> }{currentVideo?.likes?.length}
             </Button>
             <Button onClick={handleDisLike}>
-              {currentVideo.dislikes?.includes(currentUser._id) ? 
+              {currentVideo?.dislikes?.includes(currentUser?._id) ? 
               <ThumbDownIcon /> :
               <ThumbDownOffAltOutlinedIcon />} Dislike
             </Button>
@@ -189,23 +193,23 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src={channel.img} />
+            <Image src={channel?.img} />
             <ChannelDetail>
-              <ChannelName>{channel.name}</ChannelName>
-              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
+              <ChannelName>{channel?.name}</ChannelName>
+              <ChannelCounter>{channel?.subscribers} subscribers</ChannelCounter>
               <Description>
-                {currentVideo.desc}
+                {currentVideo?.desc}
               </Description>
             </ChannelDetail>
           </ChannelInfo>
           <Subscribe onClick={handleSub}>
-            {currentUser.subscribedUsers?.includes(channel._id) 
+            {currentUser?.subscribedUsers?.includes(channel?._id) 
             ? "SUBSCRIBED" : "SUBSCRIBE"
             }
           </Subscribe>
         </Channel>
         <Hr />
-        <Comments videoId={currentVideo._id}/>
+        <Comments videoId={currentVideo?._id}/>
       </Content>
       {/* <Recommendation>
         <Card type="sm"/>
